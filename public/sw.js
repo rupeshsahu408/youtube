@@ -1,15 +1,14 @@
-const CACHE_NAME = 'youtubr-v1';
-const STATIC_ASSETS = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-  '/icon-192.png',
-  '/icon-512.png',
-];
+const CACHE_NAME = 'youtubr-v2';
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(STATIC_ASSETS))
+    caches.open(CACHE_NAME).then((cache) =>
+      Promise.allSettled([
+        cache.add('/'),
+        cache.add('/index.html'),
+        cache.add('/manifest.json'),
+      ])
+    )
   );
   self.skipWaiting();
 });
@@ -27,8 +26,14 @@ self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
-  if (url.pathname.startsWith('/api/')) {
-    event.respondWith(fetch(request));
+  if (request.method !== 'GET') return;
+  if (url.pathname.startsWith('/api/')) return;
+  if (!url.protocol.startsWith('https')) return;
+
+  if (request.mode === 'navigate') {
+    event.respondWith(
+      fetch(request).catch(() => caches.match('/index.html'))
+    );
     return;
   }
 
@@ -42,7 +47,7 @@ self.addEventListener('fetch', (event) => {
         const clone = response.clone();
         caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
         return response;
-      });
+      }).catch(() => new Response('', { status: 503 }));
     })
   );
 });
