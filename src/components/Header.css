@@ -1,0 +1,133 @@
+.yt-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  height: 56px;
+  background: #0f0f0f;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  gap: 16px;
+  border-bottom: 1px solid #272727;
+}
+
+.yt-header-left {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.yt-logo-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: background 0.15s;
+}
+
+.yt-logo-btn:hover {
+  background: #272727;
+}
+
+.yt-logo-icon {
+  width: 28px;
+  height: 20px;
+  background: #ff0000;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 11px;
+}
+
+.yt-logo-text {
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -0.5px;
+}
+
+/* ── Search ── */
+.yt-search-form {
+  flex: 1;
+  max-width: 640px;
+}
+
+.yt-search-bar {
+  display: flex;
+  align-items: center;
+  height: 36px;
+}
+
+.yt-search-input {
+  flex: 1;
+  height: 100%;
+  background: #121212;
+  border: 1px solid #303030;
+  border-right: none;
+  border-radius: 40px 0 0 40px;
+  color: #fff;
+  font-size: 15px;
+  padding: 0 16px;
+  outline: none;
+  font-family: inherit;
+  transition: border-color 0.2s;
+}
+
+.yt-search-input:focus {
+  border-color: #1c62b9;
+  background: #000;
+}
+
+.yt-search-input::placeholder {
+  color: #717171;
+}
+
+.yt-search-btn {
+  height: 100%;
+  width: 48px;
+  background: #272727;
+  border: 1px solid #303030;
+  border-left: none;
+  border-radius: 0 40px 40px 0;
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+  flex-shrink: 0;
+}
+
+.yt-search-btn:hover {
+  background: #3f3f3f;
+}
+
+/* ── Right ── */
+.yt-header-right {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.yt-shield {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #22c55e;
+  background: rgba(34,197,94,0.1);
+  border: 1px solid rgba(34,197,94,0.25);
+  border-radius: 20px;
+  padding: 5px 12px;
+  white-space: nowrap;
+}

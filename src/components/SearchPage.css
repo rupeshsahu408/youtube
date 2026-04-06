@@ -1,0 +1,64 @@
+.search-page {
+  padding: 20px 24px 40px;
+  max-width: 900px;
+}
+
+.search-label {
+  font-size: 14px;
+  color: #717171;
+  margin-bottom: 16px;
+}
+
+.search-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.search-error,
+.search-empty {
+  padding: 40px 0;
+  color: #717171;
+  font-size: 14px;
+}
+
+/* ── Skeleton ── */
+.sk-row-full {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.sk-thumb-full {
+  width: 246px;
+  height: 138px;
+  border-radius: 10px;
+  flex-shrink: 0;
+  background: linear-gradient(90deg, #272727 25%, #3a3a3a 50%, #272727 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+}
+
+.sk-lines-full {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 6px;
+}
+
+.sk-line-f {
+  height: 14px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #272727 25%, #3a3a3a 50%, #272727 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+}
+
+.sk-line-f.long  { width: 80%; }
+.sk-line-f.short { width: 45%; }
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
