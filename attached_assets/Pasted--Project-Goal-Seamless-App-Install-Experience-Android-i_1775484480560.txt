@@ -1,0 +1,98 @@
+**Project Goal: Seamless App Install Experience (Android + iOS via PWA)**
+
+We want to create a premium, app-like install experience directly from the website for both Android and iOS users.
+
+---
+
+### 🔹 1. Android Experience (Primary Focus)
+
+Goal: Make installation feel like a Play Store app
+
+Requirements:
+
+* Implement full PWA support with:
+
+  * Valid `manifest.json` (name, short_name, icons, theme_color, display: standalone)
+  * Icons in 192×192 and 512×512
+* Add a **Service Worker** for offline caching and fast loading
+* Enable **Install Prompt (beforeinstallprompt event)**:
+
+  * Show a custom “Install App” button on landing page
+  * Trigger native install popup when clicked
+* App should open in **standalone mode (no browser UI)** after install
+* Add logic:
+
+  * If app is already installed → skip landing page and open main app directly
+
+---
+
+### 🔹 2. iOS Experience (Safari आधारित)
+
+Goal: Clear and easy “Add to Home Screen” flow
+
+Requirements:
+
+* Add required Apple meta tags:
+
+  * `apple-mobile-web-app-capable`
+  * `apple-mobile-web-app-status-bar-style`
+  * `apple-mobile-web-app-title`
+* Add **180×180 Apple Touch Icon**
+* Since iOS does NOT support install prompt:
+
+  * Show a **custom instruction popup/banner**:
+
+    * Step 1: Tap Share icon (⬆️)
+    * Step 2: Tap “Add to Home Screen”
+* Detect iOS device and Safari browser
+* Hide this instruction once app is installed (standalone mode detection)
+
+---
+
+### 🔹 3. Landing Page (Conversion Optimized)
+
+* Dark, premium UI (modern look)
+* Hero section with strong headline
+* Install button:
+
+  * Android → triggers install prompt
+  * iOS → shows instructions
+* Feature highlights:
+
+  * Fast
+  * Ad-free experience
+  * Privacy-focused
+  * Offline support
+* Sticky navbar with “Open App”
+
+---
+
+### 🔹 4. Smart Behavior Logic
+
+* Detect:
+
+  * `display-mode: standalone`
+  * OR `navigator.standalone` (iOS)
+* If TRUE:
+  → Redirect directly to main app (skip landing page)
+
+---
+
+### 🔹 5. Performance & UX
+
+* Fast loading (lazy loading + caching)
+* Smooth animations
+* No lag on install flow
+* App should feel like a native app
+
+---
+
+### 🔹 Final Goal
+
+* Android users feel like installing a real app (Play Store-like experience)
+* iOS users clearly understand how to install
+* Website behaves exactly like an installable app
+
+---
+
+**Important:** UX should be clean, simple, and conversion-focused. No confusion during install process.
