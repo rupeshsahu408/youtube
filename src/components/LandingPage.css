@@ -710,6 +710,81 @@
   background: rgba(255,255,255,0.13);
 }
 
+/* ── APK / ANDROID BUTTON ── */
+.cta-apk {
+  background: #1db954;
+  box-shadow: 0 0 36px rgba(29,185,84,0.35), 0 4px 20px rgba(29,185,84,0.2);
+  text-decoration: none;
+}
+
+.cta-apk:hover {
+  background: #17a347;
+  box-shadow: 0 0 54px rgba(29,185,84,0.45), 0 8px 32px rgba(29,185,84,0.25);
+  transform: translateY(-2px);
+}
+
+.cta-apk:active {
+  transform: translateY(0);
+  box-shadow: 0 0 20px rgba(29,185,84,0.25);
+}
+
+/* ── INSTALL OPTIONS (Android dual) ── */
+.install-options {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.install-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: rgba(255,255,255,0.25);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  width: 100%;
+  max-width: 300px;
+}
+
+.install-divider::before,
+.install-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(255,255,255,0.1);
+}
+
+.cta-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.75);
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 15px;
+  padding: 13px 28px;
+  cursor: pointer;
+  transition: background 0.18s, border-color 0.18s, color 0.18s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.cta-secondary:hover {
+  background: rgba(255,255,255,0.1);
+  border-color: rgba(255,255,255,0.2);
+  color: #fff;
+}
+
+/* ── PLATFORM PILLS ACTIVE ── */
+.platform-pill--active {
+  background: rgba(255,255,255,0.1);
+  border-color: rgba(255,255,255,0.18);
+  color: rgba(255,255,255,0.7);
+}
+
 /* ── RESPONSIVE ── */
 @media (max-width: 900px) {
   .landing-features {

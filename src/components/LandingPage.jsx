@@ -21,6 +21,7 @@ function useInView(options) {
 
 const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent)
 const isSafari = isIOS && /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
+const isAndroid = /android/i.test(navigator.userAgent)
 const isStandalone =
   window.matchMedia('(display-mode: standalone)').matches ||
   window.navigator.standalone === true
@@ -54,6 +55,27 @@ export default function LandingPage({ onEnter }) {
     }
   }, [onEnter])
 
+  useEffect(() => {
+    if (isSafari && !isStandalone) {
+      const timer = setTimeout(() => setShowIOSModal(true), 2000)
+      return () => clearTimeout(timer)
+    }
+  }, [])
+
+  const handleAPKDownload = async (e) => {
+    e.preventDefault()
+    try {
+      const res = await fetch('/download/youtubr.apk', { method: 'HEAD' })
+      if (res.ok) {
+        window.location.href = '/download/youtubr.apk'
+      } else {
+        alert('The APK is not available yet. Check back soon or use the "Add to Home Screen" option.')
+      }
+    } catch {
+      window.location.href = '/download/youtubr.apk'
+    }
+  }
+
   const handleAndroidInstall = async () => {
     if (!deferredPrompt) return
     deferredPrompt.prompt()
@@ -73,6 +95,7 @@ export default function LandingPage({ onEnter }) {
         </button>
       )
     }
+
     if (installed) {
       return (
         <div className="cta-success">
@@ -81,6 +104,41 @@ export default function LandingPage({ onEnter }) {
         </div>
       )
     }
+
+    if (isAndroid) {
+      return (
+        <div className="install-options">
+          <a
+            className={`cta-primary cta-apk cta-${size}`}
+            href="/download/youtubr.apk"
+            download="Youtubr.apk"
+            onClick={handleAPKDownload}
+          >
+            <span className="cta-dl-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
+                <line x1="12" y1="18" x2="12" y2="18.01"/>
+              </svg>
+            </span>
+            Download APK
+          </a>
+          {installable && (
+            <>
+              <div className="install-divider">or install directly</div>
+              <button className="cta-secondary" onClick={handleAndroidInstall}>
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+                  <polyline points="7 10 12 15 17 10"/>
+                  <line x1="12" y1="15" x2="12" y2="3"/>
+                </svg>
+                Add to Home Screen (PWA)
+              </button>
+            </>
+          )}
+        </div>
+      )
+    }
+
     if (installable) {
       return (
         <button className={`cta-primary cta-${size}`} onClick={handleAndroidInstall}>
@@ -95,6 +153,7 @@ export default function LandingPage({ onEnter }) {
         </button>
       )
     }
+
     if (isSafari) {
       return (
         <button className={`cta-primary cta-${size} cta-ios`} onClick={() => setShowIOSModal(true)}>
@@ -108,6 +167,7 @@ export default function LandingPage({ onEnter }) {
         </button>
       )
     }
+
     return (
       <button className={`cta-primary cta-${size}`} onClick={onEnter}>
         Open App
@@ -152,14 +212,30 @@ export default function LandingPage({ onEnter }) {
           </div>
 
           <div className="hero-platforms">
-            <div className="platform-pill">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.523 15.341a4.98 4.98 0 01-2.36.591c-2.756 0-4.99-2.235-4.99-4.99 0-1.372.556-2.614 1.453-3.52A8.94 8.94 0 003 15.941 8.94 8.94 0 0012 21c2.178 0 4.18-.776 5.748-2.059l-.225-.6zM12 3a9 9 0 00-7.938 13.26A6.978 6.978 0 0112 12.94a6.978 6.978 0 017.938 3.32A9 9 0 0012 3z"/></svg>
-              Android
-            </div>
-            <div className="platform-pill">
-              <svg width="14" height="14" viewBox="0 0 814 1000" fill="currentColor"><path d="M788.1 340.9c-5.8 4.5-108.2 62.2-108.2 190.5 0 148.4 130.3 200.9 134.2 202.2-.6 3.2-20.7 71.9-68.7 141.9-42.8 61.6-87.5 123.1-155.5 123.1s-85.5-39.5-164-39.5c-76 0-103.7 40.8-165.9 40.8s-105-43.4-150.3-109.2C87.3 737.9 32 620.6 32 510.7c0-194.3 125.4-297.5 248.3-297.5 66.1 0 121.2 43.4 162.7 43.4 39.5 0 101.1-46 176.3-46 28.5 0 130.9 2.6 198.3 99.2z"/></svg>
-              iOS Safari
-            </div>
+            {isAndroid ? (
+              <>
+                <div className="platform-pill platform-pill--active">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.523 15.341a4.98 4.98 0 01-2.36.591c-2.756 0-4.99-2.235-4.99-4.99 0-1.372.556-2.614 1.453-3.52A8.94 8.94 0 003 15.941 8.94 8.94 0 0012 21c2.178 0 4.18-.776 5.748-2.059l-.225-.6zM12 3a9 9 0 00-7.938 13.26A6.978 6.978 0 0112 12.94a6.978 6.978 0 017.938 3.32A9 9 0 0012 3z"/></svg>
+                  Android · APK + PWA
+                </div>
+              </>
+            ) : isIOS ? (
+              <div className="platform-pill platform-pill--active">
+                <svg width="14" height="14" viewBox="0 0 814 1000" fill="currentColor"><path d="M788.1 340.9c-5.8 4.5-108.2 62.2-108.2 190.5 0 148.4 130.3 200.9 134.2 202.2-.6 3.2-20.7 71.9-68.7 141.9-42.8 61.6-87.5 123.1-155.5 123.1s-85.5-39.5-164-39.5c-76 0-103.7 40.8-165.9 40.8s-105-43.4-150.3-109.2C87.3 737.9 32 620.6 32 510.7c0-194.3 125.4-297.5 248.3-297.5 66.1 0 121.2 43.4 162.7 43.4 39.5 0 101.1-46 176.3-46 28.5 0 130.9 2.6 198.3 99.2z"/></svg>
+                iOS · Add to Home Screen
+              </div>
+            ) : (
+              <>
+                <div className="platform-pill">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.523 15.341a4.98 4.98 0 01-2.36.591c-2.756 0-4.99-2.235-4.99-4.99 0-1.372.556-2.614 1.453-3.52A8.94 8.94 0 003 15.941 8.94 8.94 0 0012 21c2.178 0 4.18-.776 5.748-2.059l-.225-.6zM12 3a9 9 0 00-7.938 13.26A6.978 6.978 0 0112 12.94a6.978 6.978 0 017.938 3.32A9 9 0 0012 3z"/></svg>
+                  Android
+                </div>
+                <div className="platform-pill">
+                  <svg width="14" height="14" viewBox="0 0 814 1000" fill="currentColor"><path d="M788.1 340.9c-5.8 4.5-108.2 62.2-108.2 190.5 0 148.4 130.3 200.9 134.2 202.2-.6 3.2-20.7 71.9-68.7 141.9-42.8 61.6-87.5 123.1-155.5 123.1s-85.5-39.5-164-39.5c-76 0-103.7 40.8-165.9 40.8s-105-43.4-150.3-109.2C87.3 737.9 32 620.6 32 510.7c0-194.3 125.4-297.5 248.3-297.5 66.1 0 121.2 43.4 162.7 43.4 39.5 0 101.1-46 176.3-46 28.5 0 130.9 2.6 198.3 99.2z"/></svg>
+                  iOS Safari
+                </div>
+              </>
+            )}
           </div>
         </div>
         <div className="hero-glow" />
@@ -172,7 +248,7 @@ export default function LandingPage({ onEnter }) {
         {[
           { icon: '🛡️', title: 'Zero Ads', desc: "Every video streams through YouTube's privacy-enhanced mode. No pre-rolls, no mid-rolls, no banners — ever." },
           { icon: '🔒', title: 'Privacy First', desc: 'No tracking, no personalized ads, no Google cookies following you around. Just the content you chose.' },
-          { icon: '📱', title: 'Install as App', desc: 'Android users install in one tap. iPhone users add to home screen via Safari — works exactly like a native app.' },
+          { icon: '📱', title: 'Install as App', desc: 'Android users can download the APK or install via PWA. iPhone users add to home screen via Safari.' },
           { icon: '⚡', title: 'Blazing Fast', desc: 'No heavy UI frameworks, no analytics bloat. Pages load instantly and videos start immediately.' },
           { icon: '🔍', title: 'Full Search', desc: 'Search all of YouTube and browse trending videos across Music, Gaming, News, and Movies in real time.' },
           { icon: '📡', title: 'Offline Ready', desc: 'The app shell loads instantly even without a network connection, thanks to intelligent service worker caching.' },
@@ -291,6 +367,14 @@ export default function LandingPage({ onEnter }) {
                 <div className="ios-step-body">
                   <div className="ios-step-title">Tap "Add to Home Screen"</div>
                   <div className="ios-step-desc">Scroll down in the share sheet and tap <strong>"Add to Home Screen"</strong>, then tap <strong>Add</strong></div>
+                </div>
+              </div>
+              <div className="ios-step-divider" />
+              <div className="ios-step">
+                <div className="ios-step-num">3</div>
+                <div className="ios-step-body">
+                  <div className="ios-step-title">Open Youtubr</div>
+                  <div className="ios-step-desc">Tap the Youtubr icon on your home screen — it opens full screen, just like a native app</div>
                 </div>
               </div>
             </div>

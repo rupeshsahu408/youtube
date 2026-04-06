@@ -1,7 +1,7 @@
 import express from 'express'
 import { fileURLToPath } from 'url'
 import { dirname, join } from 'path'
-import { existsSync } from 'fs'
+import { existsSync, createReadStream, statSync } from 'fs'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const app = express()
@@ -59,6 +59,18 @@ app.get('/api/search', async (req, res) => {
   } catch (e) {
     res.status(502).json({ error: e.message })
   }
+})
+
+app.get('/download/youtubr.apk', (req, res) => {
+  const apkPath = join(__dirname, 'public', 'youtubr.apk')
+  if (!existsSync(apkPath)) {
+    return res.status(404).json({ error: 'APK not available yet. Place youtubr.apk in the public/ folder.' })
+  }
+  const stat = statSync(apkPath)
+  res.setHeader('Content-Type', 'application/vnd.android.package-archive')
+  res.setHeader('Content-Disposition', 'attachment; filename="Youtubr.apk"')
+  res.setHeader('Content-Length', stat.size)
+  createReadStream(apkPath).pipe(res)
 })
 
 const distPath = join(__dirname, 'dist')
