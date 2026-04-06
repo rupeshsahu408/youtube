@@ -6,28 +6,47 @@ import { existsSync, createReadStream, statSync } from 'fs'
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const app = express()
 
-const TRENDING_INSTANCES = [
+const INSTANCES = [
   'https://iv.melmac.space',
+  'https://invidious.protokolla.fi',
+  'https://invidious.darkness.services',
+  'https://invidious.slipfox.xyz',
+  'https://invidious.materialio.us',
+  'https://invidious.perennialte.ch',
+  'https://yewtu.be',
+  'https://invidious.nerdvpn.de',
 ]
 
-const SEARCH_INSTANCES = [
-  'https://iv.melmac.space',
-]
+async function fetchInstance(baseUrl, path) {
+  const res = await fetch(`${baseUrl}${path}`, {
+    headers: { 'User-Agent': 'Youtubr/1.0', Accept: 'application/json' },
+    signal: AbortSignal.timeout(8000),
+  })
+  if (!res.ok) throw new Error(`HTTP ${res.status} from ${baseUrl}`)
+  return res.json()
+}
 
-async function tryInstances(instances, path) {
-  for (const inst of instances) {
-    try {
-      const res = await fetch(`${inst}${path}`, {
-        headers: { 'User-Agent': 'Youtubr/1.0', Accept: 'application/json' },
-        signal: AbortSignal.timeout(10000),
-      })
-      if (!res.ok) continue
-      return res.json()
-    } catch {
-      continue
-    }
-  }
-  throw new Error('All instances failed')
+async function tryInstances(path) {
+  return new Promise((resolve, reject) => {
+    let failures = 0
+    let resolved = false
+
+    INSTANCES.forEach((inst) => {
+      fetchInstance(inst, path)
+        .then((data) => {
+          if (!resolved) {
+            resolved = true
+            resolve(data)
+          }
+        })
+        .catch(() => {
+          failures++
+          if (failures === INSTANCES.length && !resolved) {
+            reject(new Error('All Invidious instances failed'))
+          }
+        })
+    })
+  })
 }
 
 app.use((req, res, next) => {
@@ -39,9 +58,10 @@ app.get('/api/trending', async (req, res) => {
   try {
     const p = new URLSearchParams({ region: 'US' })
     if (req.query.type) p.set('type', req.query.type)
-    const data = await tryInstances(TRENDING_INSTANCES, `/api/v1/trending?${p}`)
+    const data = await tryInstances(`/api/v1/trending?${p}`)
     res.json(data)
   } catch (e) {
+    console.error('[trending]', e.message)
     res.status(502).json({ error: e.message })
   }
 })
@@ -54,9 +74,10 @@ app.get('/api/search', async (req, res) => {
       sort_by: 'relevance',
       page: req.query.page || '1',
     })
-    const data = await tryInstances(SEARCH_INSTANCES, `/api/v1/search?${p}`)
+    const data = await tryInstances(`/api/v1/search?${p}`)
     res.json(data)
   } catch (e) {
+    console.error('[search]', e.message)
     res.status(502).json({ error: e.message })
   }
 })
@@ -81,5 +102,5 @@ if (existsSync(distPath)) {
 
 const PORT = process.env.PORT || (process.env.NODE_ENV === 'production' ? 5000 : 3001)
 app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Youtubr API proxy → http://0.0.0.0:${PORT}`)
+  console.log(`Youtubr server → http://0.0.0.0:${PORT} (${INSTANCES.length} Invidious instances)`)
 })
